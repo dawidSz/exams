@@ -49,6 +49,9 @@ class ExamsResults:
                 continue
             else:
                 year = year - 2010
+                if year not in range(9):
+                    print('Błędny rocznik.')
+                    continue
                 country = territory.Territory('Polska')
                 result = country.data[sex][year]['passed'] / 16
                 print('Średnia na województwo: {}'.format(result))
@@ -83,6 +86,9 @@ class ExamsResults:
                 continue
             else:
                 year = year - 2010
+                if year not in range(9):
+                    print('Błędny rocznik.')
+                    continue
                 results = []
                 for name in self.voivodeships_names:
                     vv = territory.Territory(name)
@@ -98,11 +104,11 @@ class ExamsResults:
     def show_regr(self):
         print('Wybrałeś opcję pokazania regresji województw.')
         while True:
-            opt = input('Czy chcesz konkretne dane na temat kobiet/mężczyzn? [k/m]? ')
-            if opt == 'k':
+            opt = input('Czy chcesz konkretne dane na temat kobiet/mężczyzn? ')
+            if opt == 'kobiety':
                 sex = 'women'
                 break
-            elif opt == 'm':
+            elif opt == 'mężczyźni':
                 sex = 'men'
                 break
             elif not opt:
@@ -118,19 +124,21 @@ class ExamsResults:
             for regr in vv.regressions[sex]:
                 print('\t {}'.format(regr))
 
+        self.show_menu()
+
     def compare(self):
         print('Wybrałeś porównywarkę.')
         sex = 'both'
         while True:
-            msg = input('Podaj dwa województwa i opcjonalnie płeć [k/m]:')
+            msg = input('Podaj dwa województwa i opcjonalnie płeć: ')
             msg = msg.split()
             try:
                 vv1 = msg[0]
                 vv2 = msg[1]
                 if len(msg) == 3:
-                    if msg[2] == 'k':
+                    if msg[2] == 'kobiety':
                         sex = 'women'
-                    elif msg[2] == 'm':
+                    elif msg[2] == 'mężczyźni':
                         sex = 'men'
             except IndexError:
                 print('Niestety podano błędne dane :< Spróbuj jeszcze raz.')
@@ -139,8 +147,6 @@ class ExamsResults:
             if vv1 in self.voivodeships_names and vv2 in self.voivodeships_names:
                 vv1 = territory.Territory(vv1)
                 vv2 = territory.Territory(vv2)
-                print(vv1.passing_perc['women'])
-                print(vv2.passing_perc['women'])
                 for year in range(9):
                     win = 'Remis!'
                     if vv1.passing_perc[sex][year] > vv2.passing_perc[sex][year]:
